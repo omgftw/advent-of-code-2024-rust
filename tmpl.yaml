@@ -1,0 +1,3 @@
+path_rewrites:
+  - from: day_number
+    to: day{{day_number}}

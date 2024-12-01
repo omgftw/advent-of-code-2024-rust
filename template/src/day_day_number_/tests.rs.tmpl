@@ -1,0 +1,23 @@
+use crate::day{{day_number}};
+use std::fs;
+
+#[tokio::test]
+async fn test_day{{day_number}}_test_data() {
+    let test_data = fs::read_to_string("src/day{{day_number}}/data/test_1.txt").unwrap();
+    let (part1, part2) = day{{day_number}}::day{{day_number}}(Some(test_data)).await;
+
+    // Part 1
+    assert_eq!(part1, 0);
+    // Part 2
+    assert_eq!(part2, 0);
+}
+
+#[tokio::test]
+async fn test_day{{day_number}}() {
+    let (part1, part2) = day{{day_number}}::day{{day_number}}(None).await;
+
+    // Part 1
+    assert_eq!(part1, 0);
+    // Part 2
+    assert_eq!(part2, 0);
+}
