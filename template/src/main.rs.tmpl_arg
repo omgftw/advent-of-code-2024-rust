@@ -1,2 +1,2 @@
     #[arg(long)]
-    day1: bool,
+    day{{day_number}}: bool,
