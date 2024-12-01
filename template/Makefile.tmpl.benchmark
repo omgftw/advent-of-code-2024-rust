@@ -1,0 +1,2 @@
+benchmark_day{{day_number}}: build
+	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --single --day{{day_number}}'
