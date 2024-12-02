@@ -19,5 +19,5 @@ async fn test_day2() {
     // Part 1
     assert_eq!(part1, 383);
     // Part 2
-    assert_eq!(part2, 1);
+    assert_eq!(part2, 436);
 }

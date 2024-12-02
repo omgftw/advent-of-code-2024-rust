@@ -15,8 +15,6 @@ benchmark_day2: build
 # tmpl:benchmark :prepend
 benchmark_all_individually: build benchmark_day1 # tmpl:benchmark_all_individually :append
 benchmark_all_individually: benchmark_day2
-	@echo "Benchmarking all days on a single run..."
-	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH}'
 
 benchmark_all: build
 	@echo "Benchmarking all days on a single run..."
