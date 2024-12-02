@@ -1,5 +1,7 @@
 mod day1;
 
+mod day2;
+
 // tmpl:mod
 mod helpers;
 
@@ -13,6 +15,9 @@ struct Args {
     single: bool,
     #[arg(long)]
     day1: bool,
+
+    #[arg(long)]
+    day2: bool,
 
     // tmpl:arg
 }
@@ -28,6 +33,12 @@ async fn main() {
         let (day1_part1, day1_part2) = day1::day1(None).await;
         println!("Day 1 Part 1: {}", day1_part1);
         println!("Day 1 Part 2: {}", day1_part2);
+    }
+
+    if !args.single || args.day2 {
+        let (day2_part1, day2_part2) = day2::day2(None).await;
+        println!("Day 2 Part 1: {}", day2_part1);
+        println!("Day 2 Part 2: {}", day2_part2);
     }
 
     // tmpl:fn_call
