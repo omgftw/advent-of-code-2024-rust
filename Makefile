@@ -9,6 +9,7 @@ target/release/advent-of-code-2023-rust:
 
 benchmark_day1: build
 	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --single --day1'
+
 benchmark_day2: build
 	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --single --day2'
 

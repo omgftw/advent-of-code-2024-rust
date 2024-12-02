@@ -1,5 +1,6 @@
     if !args.single || args.day{{day_number}} {
-        let (day{{day_number}}_part1, day{{day_number}}_part2) = day{{day_number}}::day{{day_number}}(None).await;
-        println!("Day {{day_number}} Part 1: {}", day{{day_number}}_part1);
-        println!("Day {{day_number}} Part 2: {}", day{{day_number}}_part2);
+        handles.push(tokio::spawn(async {
+            let result = day{{day_number}}::day{{day_number}}(None).await;
+            ({{day_number}}, result)
+        }));
     }
