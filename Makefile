@@ -1,4 +1,4 @@
-WARMUP=5
+WARMUP=100
 BINARY_PATH=./target/release/advent-of-code-2023-rust
 
 build:
@@ -8,10 +8,10 @@ target/release/advent-of-code-2023-rust:
 	cargo build --release
 
 benchmark_day1: build
-	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --single --day1'
+	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --day1'
 
 benchmark_day2: build
-	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --single --day2'
+	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --day2'
 
 # tmpl:benchmark :prepend
 benchmark_all_individually: build benchmark_day1 # tmpl:benchmark_all_individually :append

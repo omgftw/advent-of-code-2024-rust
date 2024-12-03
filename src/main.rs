@@ -4,14 +4,15 @@ mod day2;
 
 mod helpers;
 
-use clap::Parser;
+use std::collections::HashMap;
 
-#[derive(Debug, Parser)]
+use clap::Parser;
+use serde::Serialize;
+
+#[derive(Debug, Parser, Serialize)]
 struct Args {
     #[arg(short, long)]
     debug: bool,
-    #[arg(long)]
-    single: bool,
     #[arg(long)]
     day1: bool,
     #[arg(long)]
@@ -27,16 +28,29 @@ async fn main() {
     }
     env_logger::init();
 
+    // By default, if no days are specified, we run all days. Check for this dynamically.
+    let json = serde_json::to_value(&args).unwrap();
+    let hashmap: HashMap<String, bool> = serde_json::from_value::<HashMap<String, serde_json::Value>>(json)
+        .unwrap()
+        .iter()
+        .filter(|(k, _)| k.starts_with("day") && k[3..].parse::<u32>().is_ok())
+        .map(|(k, v)| (k.to_string(), v.as_bool().unwrap()))
+        .collect();
+
+    let run_all = hashmap.values().all(|v| !v);
+
+    println!("{:?}", hashmap);
+
     let mut handles = vec![];
 
-    if !args.single || args.day1 {
+    if run_all || args.day1 {
         handles.push(tokio::spawn(async {
             let result = day1::day1(None).await;
             (1, result)
         }));
     }
 
-    if !args.single || args.day2 {
+    if run_all || args.day2 {
         handles.push(tokio::spawn(async {
             let result = day2::day2(None).await;
             (2, result)
