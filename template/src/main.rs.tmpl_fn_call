@@ -1,4 +1,4 @@
-    if !args.single || args.day{{day_number}} {
+    if run_all || args.day{{day_number}} {
         handles.push(tokio::spawn(async {
             let result = day{{day_number}}::day{{day_number}}(None).await;
             ({{day_number}}, result)
