@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 // tmpl:mod :prepend :no_newline
 
 mod helpers;
@@ -20,6 +21,8 @@ struct Args {
     day2: bool,
     #[arg(long)]
     day3: bool,
+    #[arg(long)]
+    day4: bool,
     // tmpl:arg :prepend :no_newline
 }
 
@@ -42,8 +45,6 @@ async fn main() {
 
     let run_all = hashmap.values().all(|v| !v);
 
-    println!("{:?}", hashmap);
-
     let mut handles = vec![];
 
     if run_all || args.day1 {
@@ -60,10 +61,17 @@ async fn main() {
         }));
     }
 
-    if !args.single || args.day3 {
+    if run_all || args.day3 {
         handles.push(tokio::spawn(async {
             let result = day3::day3(None).await;
             (3, result)
+        }));
+    }
+
+    if run_all || args.day4 {
+        handles.push(tokio::spawn(async {
+            let result = day4::day4(None).await;
+            (4, result)
         }));
     }
 
