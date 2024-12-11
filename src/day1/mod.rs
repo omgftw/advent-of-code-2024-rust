@@ -6,7 +6,7 @@ mod tests;
 fn part1(mut left_numbers: Vec<i32>, mut right_numbers: Vec<i32>) -> i32 {
     left_numbers.sort();
     right_numbers.sort();
-    
+
     let mut total = 0;
     for i in 0..left_numbers.len() {
         total += (right_numbers[i] - left_numbers[i]).abs();
@@ -30,7 +30,7 @@ fn part2(left_numbers: Vec<i32>, right_numbers: Vec<i32>) -> i32 {
 
 pub(crate) async fn day1(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day1/data/main.txt").unwrap());
-    
+
     let mut left_numbers = Vec::new();
     let mut right_numbers = Vec::new();
 

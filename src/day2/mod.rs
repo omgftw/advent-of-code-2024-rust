@@ -30,7 +30,6 @@ fn is_report_valid(report: &Vec<i32>) -> bool {
     true
 }
 
-
 fn is_report_valid_part2(report: &Vec<i32>) -> bool {
     for skip_idx in 0..report.len() {
         let filtered_report: Vec<_> = report[..skip_idx]
@@ -49,11 +48,15 @@ fn is_report_valid_part2(report: &Vec<i32>) -> bool {
 pub(crate) async fn day2(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day2/data/main.txt").unwrap());
 
-
     let lines = data.lines().collect::<Vec<&str>>();
 
-    let reports = lines.iter()
-        .map(|line| line.split_whitespace().map(|s| s.parse::<i32>().unwrap()).collect::<Vec<i32>>())
+    let reports = lines
+        .iter()
+        .map(|line| {
+            line.split_whitespace()
+                .map(|s| s.parse::<i32>().unwrap())
+                .collect::<Vec<i32>>()
+        })
         .collect::<Vec<Vec<i32>>>();
 
     let mut results_part1: Vec<bool> = Vec::new();

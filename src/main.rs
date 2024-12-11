@@ -39,12 +39,13 @@ async fn main() {
 
     // By default, if no days are specified, we run all days. Check for this dynamically.
     let json = serde_json::to_value(&args).unwrap();
-    let hashmap: HashMap<String, bool> = serde_json::from_value::<HashMap<String, serde_json::Value>>(json)
-        .unwrap()
-        .iter()
-        .filter(|(k, _)| k.starts_with("day") && k[3..].parse::<u32>().is_ok())
-        .map(|(k, v)| (k.to_string(), v.as_bool().unwrap()))
-        .collect();
+    let hashmap: HashMap<String, bool> =
+        serde_json::from_value::<HashMap<String, serde_json::Value>>(json)
+            .unwrap()
+            .iter()
+            .filter(|(k, _)| k.starts_with("day") && k[3..].parse::<u32>().is_ok())
+            .map(|(k, v)| (k.to_string(), v.as_bool().unwrap()))
+            .collect();
 
     let run_all = hashmap.values().all(|v| !v);
 
@@ -91,5 +92,4 @@ async fn main() {
         println!("Day {} Part 1: {}", day, part1);
         println!("Day {} Part 2: {}", day, part2);
     }
-
 }

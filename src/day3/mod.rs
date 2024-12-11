@@ -28,7 +28,13 @@ pub(crate) async fn day3(data: Option<String>) -> (i32, i32) {
         total_part1 += a * b;
 
         let capture_pos = c.get(0).unwrap().start();
-        if instructions.iter().rev().find(|&&(pos, _)| pos < capture_pos).unwrap_or(&(0, true)).1 {
+        if instructions
+            .iter()
+            .rev()
+            .find(|&&(pos, _)| pos < capture_pos)
+            .unwrap_or(&(0, true))
+            .1
+        {
             total_part2 += a * b;
         }
     }

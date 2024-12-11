@@ -3,7 +3,6 @@ use std::fs;
 #[cfg(test)]
 mod tests;
 
-
 // #[derive(Clone)]
 // struct VectorChar {
 //     char: char,
@@ -34,16 +33,23 @@ fn find_vectors(data: &[Vec<char>], start_pos: (usize, usize), char: char) -> Ve
     vectors
 }
 
-fn find_next_char(data: &[Vec<char>], start_pos: (usize, usize), vector: (isize, isize)) -> Option<(char, (usize, usize))> {
+fn find_next_char(
+    data: &[Vec<char>],
+    start_pos: (usize, usize),
+    vector: (isize, isize),
+) -> Option<(char, (usize, usize))> {
     let start_pos = (start_pos.0 as isize, start_pos.1 as isize);
-    let new_pos = (start_pos.0 + vector.0, start_pos.1 + vector.1); 
+    let new_pos = (start_pos.0 + vector.0, start_pos.1 + vector.1);
     if new_pos.0 < 0 || new_pos.1 < 0 {
         return None;
     }
     if new_pos.1 >= data.len() as isize || new_pos.0 >= data[0].len() as isize {
         return None;
     }
-    Some((data[new_pos.1 as usize][new_pos.0 as usize], (new_pos.0 as usize, new_pos.1 as usize)))
+    Some((
+        data[new_pos.1 as usize][new_pos.0 as usize],
+        (new_pos.0 as usize, new_pos.1 as usize),
+    ))
 }
 
 fn find_chars(data: &[Vec<char>], char: char) -> Vec<(usize, usize)> {
@@ -84,7 +90,7 @@ fn find_chars(data: &[Vec<char>], char: char) -> Vec<(usize, usize)> {
 //     for rotation in 0..4 {
 //         let mut valid = true;
 //         let start_pos = (start_pos.0 as isize, start_pos.1 as isize);
-        
+
 //         'check: for vector_char in vector_map {
 //             // Apply rotation transformation inline
 //             let rotated_vector = match rotation {
@@ -94,19 +100,19 @@ fn find_chars(data: &[Vec<char>], char: char) -> Vec<(usize, usize)> {
 //                 3 => (vector_char.vector.1, -vector_char.vector.0),        // 270° - (y, -x)
 //                 _ => unreachable!(),
 //             };
-            
+
 //             let new_pos = (start_pos.0 + rotated_vector.0, start_pos.1 + rotated_vector.1);
-            
+
 //             // Check bounds and character match
-//             if new_pos.0 < 0 || new_pos.1 < 0 
-//                 || new_pos.1 >= data.len() as isize 
-//                 || new_pos.0 >= data[0].len() as isize 
+//             if new_pos.0 < 0 || new_pos.1 < 0
+//                 || new_pos.1 >= data.len() as isize
+//                 || new_pos.0 >= data[0].len() as isize
 //                 || data[new_pos.1 as usize][new_pos.0 as usize] != vector_char.char {
 //                 valid = false;
 //                 break 'check;
 //             }
 //         }
-        
+
 //         if valid {
 //             return true;
 //         }
@@ -123,11 +129,10 @@ fn find_chars(data: &[Vec<char>], char: char) -> Vec<(usize, usize)> {
 pub(crate) async fn day4(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day4/data/main.txt").unwrap());
 
-
     let data: Vec<Vec<char>> = data.lines().map(|line| line.chars().collect()).collect();
-    
+
     let match_string = "XMAS".chars().collect::<Vec<char>>();
-    
+
     let mut full_matches = 0;
     let start_positions = find_chars(&data, match_string[0]);
     for start_pos in start_positions {
@@ -182,16 +187,21 @@ pub(crate) async fn day4(data: Option<String>) -> (i32, i32) {
                     // Count M's and S's in the diagonal positions
                     let mut m_count = 0;
                     let mut s_count = 0;
-                    
+
                     // Check all four diagonal positions
-                    for &pos in &[(y-1, x-1), (y+1, x+1), (y-1, x+1), (y+1, x-1)] {
+                    for &pos in &[
+                        (y - 1, x - 1),
+                        (y + 1, x + 1),
+                        (y - 1, x + 1),
+                        (y + 1, x - 1),
+                    ] {
                         match data[pos.0][pos.1] {
                             'M' => m_count += 1,
                             'S' => s_count += 1,
                             _ => (),
                         }
                     }
-                    
+
                     if m_count == 2 && s_count == 2 {
                         // Check that opposite corners aren't identical
                         if data[y - 1][x - 1] != data[y + 1][x + 1] {
