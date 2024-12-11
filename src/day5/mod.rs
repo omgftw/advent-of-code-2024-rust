@@ -3,25 +3,6 @@ use std::{collections::HashMap, fs};
 #[cfg(test)]
 mod tests;
 
-fn check_update(rules: &std::collections::HashMap<&str, Vec<&str>>, update: &Vec<&str>) -> bool {
-    for i in 0..update.len() {
-        let key = update[i];
-        let ruleset = rules.get(key);
-        if ruleset.is_none() {
-            continue;
-        }
-        let ruleset = ruleset.unwrap();
-        for rule in ruleset {
-            for j in 0..i {
-                if update[j] == *rule {
-                    return false;
-                }
-            }
-        }
-    }
-    true
-}
-
 fn sort_update<'a>(rules: &'a std::collections::HashMap<&str, Vec<&str>>, update: &'a Vec<&str>) -> Vec<&'a str> {
     let mut sorted: Vec<&str> = update.to_vec();
     sorted.sort_by(|a, b| {
@@ -60,14 +41,16 @@ pub(crate) async fn day5(data: Option<String>) -> (i32, i32) {
         .map(|line| line.split(',').collect())
         .collect();
 
-    let mut correct: Vec<Vec<&str>> = Vec::new();
-    let mut incorrect: Vec<Vec<&str>> = Vec::new();
+    let mut correct: Vec<&Vec<&str>> = Vec::new();
+    let mut incorrect: Vec<&Vec<&str>> = Vec::new();
 
-    for update in updates.iter() {
-        if check_update(&rules, &update) {
-            correct.push(update.to_vec());
+    let sorted_updates = updates.iter().map(|update| sort_update(&rules, &update)).collect::<Vec<Vec<&str>>>();
+
+    for (i, sorted) in sorted_updates.iter().enumerate() {
+        if sorted == &updates[i] {
+            correct.push(&updates[i]);
         } else {
-            incorrect.push(update.to_vec());
+            incorrect.push(&sorted);
         }
     }
 
