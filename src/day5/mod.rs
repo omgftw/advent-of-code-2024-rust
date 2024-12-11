@@ -22,6 +22,22 @@ fn check_update(rules: &std::collections::HashMap<&str, Vec<&str>>, update: &Vec
     true
 }
 
+fn sort_update<'a>(rules: &'a std::collections::HashMap<&str, Vec<&str>>, update: &'a Vec<&str>) -> Vec<&'a str> {
+    let mut sorted: Vec<&str> = update.to_vec();
+    sorted.sort_by(|a, b| {
+        if let Some(a_rules) = rules.get(a) {
+            if a_rules.contains(b) {
+                std::cmp::Ordering::Less
+            } else {
+                std::cmp::Ordering::Greater
+            }
+        } else {
+            std::cmp::Ordering::Equal
+        }
+    });
+    sorted
+}
+
 pub(crate) async fn day5(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day5/data/main.txt").unwrap());
     let data = data.split("\n\n").collect::<Vec<&str>>();
@@ -45,10 +61,13 @@ pub(crate) async fn day5(data: Option<String>) -> (i32, i32) {
         .collect();
 
     let mut correct: Vec<Vec<&str>> = Vec::new();
+    let mut incorrect: Vec<Vec<&str>> = Vec::new();
 
-    for update in updates {
+    for update in updates.iter() {
         if check_update(&rules, &update) {
-            correct.push(update);
+            correct.push(update.to_vec());
+        } else {
+            incorrect.push(update.to_vec());
         }
     }
 
@@ -58,5 +77,12 @@ pub(crate) async fn day5(data: Option<String>) -> (i32, i32) {
         total += update[middle_index].parse::<i32>().unwrap();
     }
 
-    (total, 0)
+    let mut total2 = 0;
+    for update in incorrect {
+        let sorted = sort_update(&rules, &update);
+        let middle_index = sorted.len() / 2;
+        total2 += sorted[middle_index].parse::<i32>().unwrap();
+    }
+
+    (total, total2)
 }
