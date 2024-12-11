@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 // tmpl:mod :prepend :no_newline
 
 mod helpers;
@@ -26,6 +27,8 @@ struct Args {
     day4: bool,
     #[arg(long)]
     day5: bool,
+    #[arg(long)]
+    day6: bool,
     // tmpl:arg :prepend :no_newline
 }
 
@@ -83,6 +86,13 @@ async fn main() {
         handles.push(tokio::spawn(async {
             let result = day5::day5(None).await;
             (5, result)
+        }));
+    }
+
+    if run_all || args.day6 {
+        handles.push(tokio::spawn(async {
+            let result = day6::day6(None).await;
+            (6, result)
         }));
     }
 

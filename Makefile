@@ -22,12 +22,16 @@ benchmark_day4: build
 benchmark_day5: build
 	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --day5'
 
+benchmark_day6: build
+	hyperfine --warmup ${WARMUP} -- '${BINARY_PATH} --day6'
+
 # tmpl:benchmark :prepend
 benchmark_all_individually: build benchmark_day1
 benchmark_all_individually: benchmark_day2
 benchmark_all_individually: benchmark_day3
 benchmark_all_individually: benchmark_day4
 benchmark_all_individually: benchmark_day5
+benchmark_all_individually: benchmark_day6
 # tmpl:benchmark_all_individually :prepend
 
 benchmark_all: build

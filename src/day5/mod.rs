@@ -3,7 +3,10 @@ use std::{collections::HashMap, fs};
 #[cfg(test)]
 mod tests;
 
-fn sort_update<'a>(rules: &'a std::collections::HashMap<&str, Vec<&str>>, update: &'a Vec<&str>) -> Vec<&'a str> {
+fn sort_update<'a>(
+    rules: &'a std::collections::HashMap<&str, Vec<&str>>,
+    update: &'a Vec<&str>,
+) -> Vec<&'a str> {
     let mut sorted: Vec<&str> = update.to_vec();
     sorted.sort_by(|a, b| {
         if let Some(a_rules) = rules.get(a) {
@@ -44,7 +47,10 @@ pub(crate) async fn day5(data: Option<String>) -> (i32, i32) {
     let mut correct: Vec<&Vec<&str>> = Vec::new();
     let mut incorrect: Vec<&Vec<&str>> = Vec::new();
 
-    let sorted_updates = updates.iter().map(|update| sort_update(&rules, &update)).collect::<Vec<Vec<&str>>>();
+    let sorted_updates = updates
+        .iter()
+        .map(|update| sort_update(&rules, &update))
+        .collect::<Vec<Vec<&str>>>();
 
     for (i, sorted) in sorted_updates.iter().enumerate() {
         if sorted == &updates[i] {
