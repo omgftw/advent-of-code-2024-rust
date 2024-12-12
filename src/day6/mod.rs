@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::fs;
 use std::ops::Add;
+use rayon::prelude::*;
 
 #[cfg(test)]
 mod tests;
@@ -93,11 +94,11 @@ fn get_next_tile(
     Ok(new_position)
 }
 
-fn print_map(map: &Vec<Vec<char>>) {
-    for row in map.iter() {
-        println!("{}", row.iter().collect::<String>());
-    }
-}
+// fn print_map(map: &Vec<Vec<char>>) {
+//     for row in map.iter() {
+//         println!("{}", row.iter().collect::<String>());
+//     }
+// }
 
 pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day6/data/main.txt").unwrap());
@@ -130,22 +131,25 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
         }
     }
 
-    let mut loop_count = 0;
-    let mut obstacles_encountered = HashSet::with_capacity(map.len() * map[0].len());
-    for y in 0..map.len() {
+    // let mut loop_count = 0;
+    let loop_counts: Vec<i32> = (0..map.len()).into_par_iter().map(|y| {
+        let mut local_count = 0;
+        let mut local_map = map.clone();
+        let mut obstacles_encountered = HashSet::with_capacity(map.len() * map[0].len());
+        
         for x in 0..map[y].len() {
-            let orig_symbol = map[y][x];
-            map[y][x] = 'O';
+            let orig_symbol = local_map[y][x];
+            local_map[y][x] = 'O';
             let mut position = start_position;
             let mut vector = initial_vector;
             obstacles_encountered.clear();
 
-            while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
-                let next_tile_symbol = map[next_tile.y()][next_tile.x()];
+            while let Ok(next_tile) = get_next_tile(&local_map, &position, &vector) {
+                let next_tile_symbol = local_map[next_tile.y()][next_tile.x()];
                 if next_tile_symbol == '#' || next_tile_symbol == 'O' {
                     let obstacle = (next_tile, vector);
                     if obstacles_encountered.contains(&obstacle) {
-                        loop_count += 1;
+                        local_count += 1;
                         break;
                     }
                     obstacles_encountered.insert(obstacle);
@@ -154,9 +158,12 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
                     position = next_tile;
                 }
             }
-            map[y][x] = orig_symbol;
+            local_map[y][x] = orig_symbol;
         }
-    }
+        local_count
+    }).collect();
+
+    let loop_count = loop_counts.iter().sum();
 
     (x_count, loop_count)
 }
