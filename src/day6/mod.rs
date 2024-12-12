@@ -92,6 +92,12 @@ fn get_next_tile(
     Ok(new_position)
 }
 
+fn print_map(map: &Vec<Vec<char>>) {
+    for row in map.iter() {
+        println!("{}", row.iter().collect::<String>());
+    }
+}
+
 pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day6/data/main.txt").unwrap());
 
@@ -106,7 +112,7 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
     map[position.y()][position.x()] = 'X';
 
     while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
-        if map[next_tile.y()][next_tile.x()] != '.' && map[next_tile.y()][next_tile.x()] != 'X' {
+        if map[next_tile.y()][next_tile.x()] == '#' {
             vector = turn_90_degrees(vector);
         } else {
             position = next_tile;
@@ -123,29 +129,26 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
         }
     }
 
-    let max_attempts = map.len() * map[0].len();
-    let mut loop_positions = Vec::new();
     let mut loop_count = 0;
     for y in 0..map.len() {
-        println!("Checking {}/{}", y, map.len());
         for x in 0..map[y].len() {
             let orig_symbol = map[y][x];
             map[y][x] = 'O';
             let mut position = start_position;
             let mut vector = initial_vector;
-            let mut attempts = 0;
+            let mut obstables_encountered = Vec::new();
             while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
-                attempts += 1;
-                if attempts > max_attempts {
-                    loop_positions.push(position);
-                    loop_count += 1;
-                    break;
-                }
-                if map[next_tile.y()][next_tile.x()] != '.' && map[next_tile.y()][next_tile.x()] != 'X' {
+                let next_tile_symbol = map[next_tile.y()][next_tile.x()];
+                if next_tile_symbol == '#' || next_tile_symbol == 'O' {
+                    // Check if we've encountered this obstacle before from the same direction
+                    if obstables_encountered.contains(&(next_tile, vector)) {
+                        loop_count += 1;
+                        break;
+                    }
+                    obstables_encountered.push((next_tile, vector));
                     vector = turn_90_degrees(vector);
                 } else {
                     position = next_tile;
-                    map[position.y()][position.x()] = 'X';
                 }
             }
             map[y][x] = orig_symbol;
