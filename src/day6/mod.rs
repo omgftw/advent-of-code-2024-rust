@@ -139,7 +139,7 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
             let mut position = start_position;
             let mut vector = initial_vector;
             obstacles_encountered.clear();
-            
+
             while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
                 let next_tile_symbol = map[next_tile.y()][next_tile.x()];
                 if next_tile_symbol == '#' || next_tile_symbol == 'O' {

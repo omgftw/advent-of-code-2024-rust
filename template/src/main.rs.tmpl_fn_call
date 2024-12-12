@@ -1,6 +1,6 @@
     if run_all || args.day{{day_number}} {
         handles.push(tokio::spawn(async {
             let result = day{{day_number}}::day{{day_number}}(None).await;
-            ({{day_number}}, result)
+            ({{day_number}}, (result.0 as i64, result.1 as i64))
         }));
     }
