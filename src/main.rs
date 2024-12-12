@@ -4,6 +4,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 // tmpl:mod :prepend :no_newline
 
 mod helpers;
@@ -12,6 +13,7 @@ use std::collections::HashMap;
 
 use clap::Parser;
 use serde::Serialize;
+use tokio::task::JoinHandle;
 
 #[derive(Debug, Parser, Serialize)]
 struct Args {
@@ -29,6 +31,8 @@ struct Args {
     day5: bool,
     #[arg(long)]
     day6: bool,
+    #[arg(long)]
+    day7: bool,
     // tmpl:arg :prepend :no_newline
 }
 
@@ -52,47 +56,54 @@ async fn main() {
 
     let run_all = hashmap.values().all(|v| !v);
 
-    let mut handles = vec![];
+    let mut handles: Vec<JoinHandle<(i32, (i64, i64))>> = vec![];
 
     if run_all || args.day1 {
         handles.push(tokio::spawn(async {
             let result = day1::day1(None).await;
-            (1, result)
+            (1, (result.0 as i64, result.1 as i64))
         }));
     }
 
     if run_all || args.day2 {
         handles.push(tokio::spawn(async {
             let result = day2::day2(None).await;
-            (2, result)
+            (2, (result.0 as i64, result.1 as i64))
         }));
     }
 
     if run_all || args.day3 {
         handles.push(tokio::spawn(async {
             let result = day3::day3(None).await;
-            (3, result)
+            (3, (result.0 as i64, result.1 as i64))
         }));
     }
 
     if run_all || args.day4 {
         handles.push(tokio::spawn(async {
             let result = day4::day4(None).await;
-            (4, result)
+            (4, (result.0 as i64, result.1 as i64))
         }));
     }
 
     if run_all || args.day5 {
         handles.push(tokio::spawn(async {
             let result = day5::day5(None).await;
-            (5, result)
+            (5, (result.0 as i64, result.1 as i64))
         }));
     }
 
     if run_all || args.day6 {
         handles.push(tokio::spawn(async {
             let result = day6::day6(None).await;
-            (6, result)
+            (6, (result.0 as i64, result.1 as i64))
+        }));
+    }
+
+    if run_all || args.day7 {
+        handles.push(tokio::spawn(async {
+            let result = day7::day7(None).await;
+            (7, (result.0 as i64, result.1 as i64))
         }));
     }
 
