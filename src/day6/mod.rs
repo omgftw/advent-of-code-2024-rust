@@ -1,10 +1,11 @@
+use std::collections::HashSet;
 use std::fs;
 use std::ops::Add;
 
 #[cfg(test)]
 mod tests;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 struct Vector2d {
     x: isize,
     y: isize,
@@ -82,10 +83,10 @@ fn get_next_tile(
     vector: &Vector2d,
 ) -> Result<Vector2d, ()> {
     let new_position = position + vector;
-    if new_position.x >= map.len() as isize
-        || new_position.y >= map[0].len() as isize
-        || new_position.x < 0
+    if new_position.y >= map.len() as isize
         || new_position.y < 0
+        || new_position.x >= map[0].len() as isize
+        || new_position.x < 0
     {
         return Err(());
     }
@@ -130,22 +131,24 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
     }
 
     let mut loop_count = 0;
+    let mut obstacles_encountered = HashSet::with_capacity(map.len() * map[0].len());
     for y in 0..map.len() {
         for x in 0..map[y].len() {
             let orig_symbol = map[y][x];
             map[y][x] = 'O';
             let mut position = start_position;
             let mut vector = initial_vector;
-            let mut obstables_encountered = Vec::new();
+            obstacles_encountered.clear();
+            
             while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
                 let next_tile_symbol = map[next_tile.y()][next_tile.x()];
                 if next_tile_symbol == '#' || next_tile_symbol == 'O' {
-                    // Check if we've encountered this obstacle before from the same direction
-                    if obstables_encountered.contains(&(next_tile, vector)) {
+                    let obstacle = (next_tile, vector);
+                    if obstacles_encountered.contains(&obstacle) {
                         loop_count += 1;
                         break;
                     }
-                    obstables_encountered.push((next_tile, vector));
+                    obstacles_encountered.insert(obstacle);
                     vector = turn_90_degrees(vector);
                 } else {
                     position = next_tile;

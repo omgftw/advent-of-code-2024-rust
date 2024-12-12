@@ -1,6 +1,9 @@
 _default:
     just --list
 
+run:
+    cargo run --release
+
 add_day day_number:
     templative template --day_number {{day_number}}
 
