@@ -4,6 +4,7 @@ use std::ops::Add;
 #[cfg(test)]
 mod tests;
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 struct Vector2d {
     x: isize,
     y: isize,
@@ -94,20 +95,17 @@ fn get_next_tile(
 pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
     let data = data.unwrap_or_else(|| fs::read_to_string("src/day6/data/main.txt").unwrap());
 
-    println!("Starting...");
-
     let mut map = data
         .lines()
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
     let start_position = find_start_position(&map);
     let mut position = start_position;
-    let mut vector = get_movement_vector(map[position.y()][position.x()]);
+    let initial_vector = get_movement_vector(map[position.y()][position.x()]);
+    let mut vector = initial_vector;
     map[position.y()][position.x()] = 'X';
 
-    println!("Traversing map...");
     while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
-        println!("{}", map[position.y()][position.x()]);
         if map[next_tile.y()][next_tile.x()] != '.' && map[next_tile.y()][next_tile.x()] != 'X' {
             vector = turn_90_degrees(vector);
         } else {
@@ -125,5 +123,34 @@ pub(crate) async fn day6(data: Option<String>) -> (i32, i32) {
         }
     }
 
-    (x_count, 0)
+    let max_attempts = map.len() * map[0].len();
+    let mut loop_positions = Vec::new();
+    let mut loop_count = 0;
+    for y in 0..map.len() {
+        println!("Checking {}/{}", y, map.len());
+        for x in 0..map[y].len() {
+            let orig_symbol = map[y][x];
+            map[y][x] = 'O';
+            let mut position = start_position;
+            let mut vector = initial_vector;
+            let mut attempts = 0;
+            while let Ok(next_tile) = get_next_tile(&map, &position, &vector) {
+                attempts += 1;
+                if attempts > max_attempts {
+                    loop_positions.push(position);
+                    loop_count += 1;
+                    break;
+                }
+                if map[next_tile.y()][next_tile.x()] != '.' && map[next_tile.y()][next_tile.x()] != 'X' {
+                    vector = turn_90_degrees(vector);
+                } else {
+                    position = next_tile;
+                    map[position.y()][position.x()] = 'X';
+                }
+            }
+            map[y][x] = orig_symbol;
+        }
+    }
+
+    (x_count, loop_count)
 }
